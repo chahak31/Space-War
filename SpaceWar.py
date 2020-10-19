@@ -82,7 +82,7 @@ class Ally(Sprite):
         self.speed=8
         self.setheading(random.randint(0,360))
 
-     def move(self):
+    def move(self):
         self.fd(self.speed)
 
         #Boundary detection
@@ -148,12 +148,23 @@ class Game():
             self.pen.rt(90)
         self.pen.penup()
         self.pen.ht()
+        self.pen.pendown()
+
+    def show_status(self):
+        self.pen.undo()
+        msg="Score: %s"%(self.score)
+        self.pen.penup()
+        self.pen.goto(-310,310)
+        self.pen.write(msg, font=("Arial",16,"normal"))
 
 #Create game object
 game = Game()
 
 #Draw the game border
 game.draw_border()
+
+#Show the game status
+game.show_status()
 
 #create my sprites
 player = Player("triangle","white", 0,0)
@@ -181,6 +192,8 @@ while True:
         x=random.randint(-250,250)
         y=random.randint(-250,250)
         enemy.goto(x,y)
+        game.score-=100
+        game.show_status()
 
     #check for collision between missile and the enenmy
     if missile.is_collision(enemy):
@@ -188,12 +201,18 @@ while True:
         y=random.randint(-250,250)
         enemy.goto(x,y)
         missile.status="ready"
+        #Increase the score
+        game.score+=100
+        game.show_status()
         
     #check for collision between missile and the ally
-    if missile.is_collision(enemy):
+    if missile.is_collision(ally):
         x=random.randint(-250,250)
         y=random.randint(-250,250)
         ally.goto(x,y)
         missile.status="ready"
+        #Increase the score
+        game.score-=50
+        game.show_status()
 
 delay = input("Press enter to finish")
